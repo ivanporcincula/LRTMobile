@@ -11,16 +11,23 @@ const SchedulesPage = ({ route }) => {
     'Antipolo': [
       { trainId: 1, eta: 50 },
       { trainId: 2, eta: 55 },
+      { trainId: 3, eta: 25 },
+      { trainId: 4, eta: 35 },
       // Add more schedules for Antipolo Station
     ],
     'Marikina-Pasig': [
       { trainId: 1, eta: 30 },
       { trainId: 2, eta: 35 },
+      { trainId: 3, eta: 25 },
+      { trainId: 4, eta: 45 },
       // Add more schedules for Marikina-Pasig Station
     ],
     'Santolan': [
       { trainId: 1, eta: 10 },
       { trainId: 2, eta: 15 },
+      { trainId: 3, eta: 25 },
+      { trainId: 4, eta: 35 },
+
       // Add more schedules for Santolan Station
     ],
   };

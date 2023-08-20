@@ -19,12 +19,12 @@ const MenuPage = ({ navigation }) => {
         <View style={[styles.buttonBox, styles.buttonBoxMargin]}>
           <TouchableOpacity style={styles.button} onPress={navigateToTwitterPage}>
             <ImageBackground
-              source={require('../../../assets/lrt-icon.png')}
+              source={require('../../../assets/lrt-schedule.png')}
               style={styles.buttonImage}
             >
             </ImageBackground>
           </TouchableOpacity>
-          <Text style={styles.buttonText}>LRT-2 Announcements</Text>
+          <Text style={styles.buttonText}>Train Schedules</Text>
         </View>
         <View style={styles.buttonBox}>
           <TouchableOpacity style={styles.button} onPress={navigateToMenuPage}>
