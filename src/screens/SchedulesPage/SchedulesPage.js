@@ -1,43 +1,36 @@
-// SchedulesScreen.js
-
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+
+// const clockIcon = require('../../../assets/clock-icon.png'); // Replace with the actual path to your clock icon image
 
 const SchedulesPage = ({ route }) => {
   const { station, etaText } = route.params;
-
-  // Sample data for different trains and their ETAs
-  // const trainSchedules = {
-  //   'Antipolo': [
-  //     { trainId: 1, eta: 50 },
-  //     { trainId: 2, eta: 55 },
-  //     { trainId: 3, eta: 25 },
-  //     { trainId: 4, eta: 35 },
-  //     // Add more schedules for Antipolo Station
-  //   ],
-  //   'Marikina-Pasig': [
-  //     { trainId: 1, eta: 30 },
-  //     { trainId: 2, eta: 35 },
-  //     { trainId: 3, eta: 25 },
-  //     { trainId: 4, eta: 45 },
-  //     // Add more schedules for Marikina-Pasig Station
-  //   ],
-  //   'Santolan': [
-  //     { trainId: 1, eta: 10 },
-  //     { trainId: 2, eta: 15 },
-  //     { trainId: 3, eta: 25 },
-  //     { trainId: 4, eta: 35 },
-
-  //     // Add more schedules for Santolan Station
-  //   ],
-  // };
-
-  // const stationSchedules = trainSchedules[station];
+  const etaTexts = etaText.split('\n');
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>{station} Train Schedules</Text>
-      <Text style={styles.scheduleText}>{etaText}</Text>
+      <View style={styles.headerContainer}>
+        <Image
+          source={require('../../../assets/train-station.png')}
+          style={styles.stationIcon}
+        />
+        <Text style={styles.headerText}>{station} Train Schedules</Text>
+      </View>
+      <View style={styles.cardsContainer}>
+        {etaTexts.map((schedule, index) => (
+          <View key={index} style={styles.card}>
+            <View style={styles.scheduleItem}>
+              {/* <Image source={clockIcon} style={styles.clockIcon} /> */}
+              <Image
+                source={require('../../../assets/train-station.png')}
+                style={styles.clockIcon}
+              />
+
+              <Text style={styles.scheduleText}>{schedule}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
     </View>
   );
 };
@@ -45,18 +38,52 @@ const SchedulesPage = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Align container to the top
+    backgroundColor: '#F4F4F4',
+    padding: 20,
+  },
+  headerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF', // Set your desired background color here
+    marginBottom: 20,
   },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginLeft: 10,
+    color: '#333',
+  },
+  stationIcon: {
+    width: 32,
+    height: 32,
+  },
+  cardsContainer: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  card: {
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 19,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    marginBottom: 15,
+  },
+  scheduleItem: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  clockIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 3,
   },
   scheduleText: {
     fontSize: 16,
-    marginBottom: 10,
+    color: '#555',
   },
 });
 

@@ -41,8 +41,6 @@ const TrainPage = ({ navigation }) => {
         // const etaText = getEtaText(updatedTrainData); // Pass updated trainData as argument
         // console.log("Updated ETA:", etaText);
 
-
-
       })
       .catch((error) => {
         console.error(error);
@@ -79,7 +77,6 @@ const TrainPage = ({ navigation }) => {
     const requestOptions = {
       method: 'GET',
       headers: headers,
-      // You can add more options here if needed
     };
 
     return fetch(url, requestOptions)
@@ -118,7 +115,6 @@ const TrainPage = ({ navigation }) => {
     const requestOptions = {
       method: 'GET',
       headers: headers,
-      // You can add more options here if needed
     };
 
     return fetch(url, requestOptions)
@@ -291,14 +287,14 @@ const TrainPage = ({ navigation }) => {
   const getEtaTextForStation = (station, stationCoordinates) => {
     if (trainData.length > 0) {
       const etaTexts = trainData.map((train) => {
-        const trainCoordinates = { lat: train.latitude, lng: train.longitude };
+        // const trainCoordinates = { lat: train.latitude, lng: train.longitude };
         const stationObject = stationCoordinates.find((coord) => coord.name === station);
 
         if (!stationObject) {
           return `No station is currently being selected`;
         }
 
-        const stationCoords = { lat: stationObject.latitude, lng: stationObject.longitude };
+        // const stationCoords = { lat: stationObject.latitude, lng: stationObject.longitude };
 
         // const distance = geoDistance(trainCoordinates, stationCoords, 'K');
         // 14.6122170
@@ -307,11 +303,20 @@ const TrainPage = ({ navigation }) => {
 
         console.log("The distance between Train Coordinates and Station: ", distance);
         if (train.speed !== 0) {
-          const etaInMinutes = ((distance / ((train.speed * 3600) / (1000))) * 60).toFixed(2); // ETA = distance / ( (speed * 3600) / 1000 ) 
-          console.log("This is the ETA: ", etaInMinutes);
-          return `Train ${train.id} - ETA to ${station}: ${etaInMinutes} minutes`;
+          const etaInMinutes = ((distance / ((train.speed * 3600) / 1000)) * 60).toFixed(2); // ETA in minutes
+          let etaText;
+          if (etaInMinutes < 1) {
+            const etaInSeconds = (etaInMinutes * 60).toFixed(0); // ETA in seconds
+            etaText = `Train ${train.id} - ETA to ${station}: ${etaInSeconds} seconds`;
+          } else if (etaInMinutes >= 60) {
+            const etaInHours = (etaInMinutes / 60).toFixed(2); // ETA in hours
+            etaText = `Train ${train.id} - ETA to ${station}: ${etaInHours} hours`;
+          } else {
+            etaText = `Train ${train.id} - ETA to ${station}: ${etaInMinutes} minutes`;
+          }
+          return etaText;
         } else {
-          return `Train ${train.id} - ETA to ${station}: Train is not moving.`;
+          return `Train ${train.id} - ETA to ${station}: Train stopped.`; // Train not Moving
         }
       });
       return etaTexts.join('\n');
@@ -381,7 +386,7 @@ const TrainPage = ({ navigation }) => {
           const etaInMinutes = closestStation.distance / train.speed; // ETA = distance / speed
           return `Train ${train.id} - ETA to ${closestStation.station.name}: ${Math.round(etaInMinutes)} minutes`;
         } else {
-          return `Train ${train.id} - ETA to ${closestStation.station.name}: Train is not moving.`;
+          return `Train ${train.id} - ETA to ${closestStation.station.name}: Train Stopped.`;
         }
       });
       return etaTexts.join('\n');
