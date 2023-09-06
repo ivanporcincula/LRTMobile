@@ -16,7 +16,8 @@ app.use(bodyParser.json());
 const TRAINS = ['Train1', 'Train2', 'Train3', 'Train4'];
 
 
-app.post('/webhook', (req, res) => {
+app.post('/webhook', async (req, res) => {
+    console.log("test post");
     try {
         const receivedData = req.body; // Data sent by TTN's webhook
 
@@ -34,7 +35,6 @@ app.post('/webhook', (req, res) => {
         } else {
             console.log('Invalid train ID:', trainId);
         }
-
         res.status(200).send('Data received successfully.');
 
     } catch (error) {
@@ -42,6 +42,10 @@ app.post('/webhook', (req, res) => {
         res.status(500).send('Error processing data.');
     }
 });
+
+
+
+
 
 // Add a new GET endpoint to retrieve data for each train
 app.get('/getTrainData/:trainId', async (req, res) => {

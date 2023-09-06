@@ -5338,6 +5338,11 @@
   "resolved" "https://registry.npmjs.org/gensync/-/gensync-1.0.0-beta.2.tgz"
   "version" "1.0.0-beta.2"
 
+"geo-distance-helper@^2.0.4":
+  "integrity" "sha512-gwYLmuPFEstB4fcKpTUi5hxgEkVGSUJk0803LujTEfXWFeWrCeXbfeWogEjuZ+CD582FpeueR1/p9pxpwgFQzQ=="
+  "resolved" "https://registry.npmjs.org/geo-distance-helper/-/geo-distance-helper-2.0.4.tgz"
+  "version" "2.0.4"
+
 "geolib@^3.3.4":
   "integrity" "sha512-EicrlLLL3S42gE9/wde+11uiaYAaeSVDwCUIv2uMIoRBfNJCn8EsSI+6nS3r4TCKDO6+RQNM9ayLq2at+oZQWQ=="
   "resolved" "https://registry.npmjs.org/geolib/-/geolib-3.3.4.tgz"
@@ -5665,6 +5670,11 @@
   "version" "1.0.3"
   dependencies:
     "function-bind" "^1.1.1"
+
+"haversine-distance@^1.2.1":
+  "integrity" "sha512-rQpG89d6NlAis0eqOSFXDqNU/GZcMPlHNVMqTSzD16niD9s1fDK8T6kwrK0WJ7OMU+iRNy3cgGYnNQihMqmaHg=="
+  "resolved" "https://registry.npmjs.org/haversine-distance/-/haversine-distance-1.2.1.tgz"
+  "version" "1.2.1"
 
 "hermes-estree@0.8.0":
   "integrity" "sha512-W6JDAOLZ5pMPMjEiQGLCXSSV7pIBEgRR5zGkxgmzGSXHOxqV5dC/M1Zevqpbm9TZDE5tu358qZf8Vkzmsc+u7Q=="

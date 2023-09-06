@@ -1,80 +1,224 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Button, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Button, Text, Image, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import SchedulesPage from '../SchedulesPage/SchedulesPage';
-// import firebase from 'firebase/app';
-// import 'firebase/database';
-
-
-// const firebaseConfig = {
-//   databaseURL: 'https://lrtmobile-44e44-default-rtdb.firebaseio.com/',
-//   type: "service_account",
-//   project_id: "lrtmobile-44e44",
-//   private_key_id: "4d65c5417bf5130fdf87fa0c07f166dc3ad525d1",
-//   private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDUaRsC1DC1jTwp\n7AizqJqFqHeVHkEJXLuc2VTKvyxtDFiuwYzdcHY2B1Mwz36xKX3r69Tq91ZXK0Mo\nr2Mxzz+RrQaXmnOPJpkLn0P5uDNzJWWdFdPiE88HcHa5iVsiE2Jfl2KClAQHsxxZ\nTn9ztiilZI52vn7LpexwNw55BWMB0aadHTLR3kO+AeSHDwKGA1ft80vwlU5HZQjy\nEUbhq6nHzZ8rzePweMPTCEYB5QV81Wt4sB8uiks1/IiPY4kwUiWSIw+UdOmnjGUN\ngc7uOU0fyGq4aOZG8HHW+nYTkzPiTjOQBVbUc2M1lJUh5mmwPjfpOewW3pum1btf\nMzMvjMuFAgMBAAECggEARvVj0iKbsRLhDeotkAMbt9nrNPQZ6uxBOqk5089gon9U\n4vCCw/kNbIgu6OfwXXPMfrNWejYtcEpiEaXhv+KJzHsecCfnQeO1jfXjKfm4qldM\nZllD4ssWRthxuRKjULNkEiYLAS88V2wk5Mq99iRc2L/Kfe2ugw7HeUdTPOepRxIs\nNrfjoGbqFJZYZtDoMHbgC/WCzi47r0jAPVVAnRnOOO79+p2/2HWveQGh4PJQilWV\nT9LbdEQuqFyQGbRJSUm3R9wIsdaeANMtmKU1JILRzAVUT3uhtfHwJpMZklGy6Du4\nuj7pg3xvXHDfFF9mD6V0tA6xyAQWodBV+xfwJHNvEwKBgQDv9PdEjSvExQQnvECu\nq4GF3z8hmlE0/u+AmTUMSmdM+LdSkBC5lPRY8NDj1c6OEpolkMxqeRLK6BUpg/Rq\nRDAEUJdTwgrx3UMlbXTEb6HHk8sXbkBHIoqHk570kWteY5jYdSDCoQSqu35CATYo\nYuZZ7r7wjLucM0yEQCOFTn33cwKBgQDinKoaoMjk4fZ1bxmqUBdBrLLPzspz2cky\nDVFknfxQAhhdNIu6YJj0/i9IFxK/jZD1GkdBrwW6wEgmCFA45ECSXfk+WJ9HLKau\nn217MdJ32bMVM8RvHMdFBhbWVIVIEb16I3lQ97AZCHVD+gInReaEaP9oRqD+Y23n\nJ2k1osNDJwKBgQDg2ogqsK7nAEdYhMuH4ibJL92Uu2qFYq9Drk1Lax1Jv3bp4x4J\nCU+/WEomdV/NOhlAQmOLElFN2hSahpAuVB86q9piHl7rLg+RrvPQb1sGDbQuDJ4n\nCnMNgINfYjVeia3ciEVenEwnQPKbH0+EoMiCVXqPJxFW2atF8mRWsqrPiQKBgFJl\nLkByV7lJI8i9NbLEXkBl37pJcTlAZbRKPV79RqF8sYkqMuf4eYUS6vQmV43Iln1Y\nKbKLReUKRvF1Ml4NOCFABAEUTg2eAZkapL8XdXRYdpHt+a2A5D+HoEQcBT4YHTHM\nti6ncKMZfTHTNHc9JjzcxIkQrTbxxiM3JDz5SlAfAoGAB9o7n9BOEkZcKKBUOhRY\nSL7tV9TJ7ls+Ke/UkP0gOLUj5QgEYpNpVXDWkojC3V9+nt1g2vOSt4GcewBSTB73\nE0nqpAgjiVnjpjGHByLwwhxSGvjepX/dIVwSqsZypwMJvTIr6fQIY0hyA7ilMdme\na3KdAu94UCcDD3BUFV8DkLM=\n-----END PRIVATE KEY-----\n",
-//   client_email: "firebase-adminsdk-85f23@lrtmobile-44e44.iam.gserviceaccount.com",
-//   client_id: "116753384814282539969",
-//   auth_uri: "https://accounts.google.com/o/oauth2/auth",
-//   token_uri: "https://oauth2.googleapis.com/token",
-//   auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-//   client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-85f23%40lrtmobile-44e44.iam.gserviceaccount.com",
-//   universe_domain: "googleapis.com"
-// };
-
-// firebase.initializeApp(firebaseConfig);
-// const database = firebase.database();
+import geoDistance from 'geo-distance-helper';
 
 const stationCoordinates = [
-  { latitude: 14.6248, longitude: 121.1213 }, // Antipolo Station
-  { latitude: 14.62039, longitude: 121.10014 }, // Marikina-Pasig Station
-  { latitude: 14.6184, longitude: 121.09111 }, // LANDMARK CLOSE TO SANTOLAN STATION (PAJARON)
-  { latitude: 14.61988, longitude: 121.08848 }, // LANDMARK CLOSE TO SANTOLAN STATION (BCEO)
-  { latitude: 14.62211, longitude: 121.08596 }, // Santolan Station
+  { name: 'Antipolo', latitude: 14.6248, longitude: 121.1213 }, // Antipolo Station
+  { name: 'Marikina-Pasig', latitude: 14.62039, longitude: 121.10014 }, // Marikina-Pasig Station
+  { name: 'Pajaron', latitude: 14.6184, longitude: 121.09111 }, // LANDMARK CLOSE TO SANTOLAN STATION (PAJARON)
+  { name: 'BCEO', latitude: 14.61988, longitude: 121.08848 }, // LANDMARK CLOSE TO SANTOLAN STATION (BCEO)
+  { name: 'Santolan', latitude: 14.62211, longitude: 121.08596 }, // Santolan Station
 ];
 
 const TrainPage = ({ navigation }) => {
   const mapRef = useRef(null); // Create a ref for the MapView
-  const doubleClickRef = useRef(false); // Create a ref to track double clicks
   const [showSchedules, setShowSchedules] = useState(false);
+
+  const updateTrainData = () => {
+    Promise.all([
+      Sensor1GetRequestFromTagIO(),
+      Sensor2GetRequestFromTagIO(),
+      Sensor3GetRequestFromTagIO(),
+      Sensor4GetRequestFromTagIO(),
+    ])
+      .then((responses) => {
+        const updatedTrainData = responses.map((response, index) => {
+          return {
+            id: index + 1, // Assign a unique id based on the index
+            latitude: response.latitude,
+            longitude: response.longitude,
+            speed: response.speed,
+          };
+        });
+
+        setTrainData(updatedTrainData);
+        console.log("this is updated train data");
+        console.log(updatedTrainData);
+
+        // // Calculate and update ETA text after updating train data
+        // const etaText = getEtaText(updatedTrainData); // Pass updated trainData as argument
+        // console.log("Updated ETA:", etaText);
+
+
+
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  useEffect(() => {
+
+
+    const interval = setInterval(updateTrainData, 3000); //POST Request every 1 second, can be changed
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleDoubleTap = () => {
+    mapRef.current.animateToRegion(initialRegion, 500); // Adjust the duration as needed
+    setSelectedStation(null);
+  };
 
   // Initial Train values
   const [trainData, setTrainData] = useState([
-    {
-      // Train 1
-      id: 1,
-      latitude: 14.61988,
-      longitude: 121.08848,
-      speed: 35,
-
-      // add trains here
-    },
 
   ]);
 
   const [selectedStation, setSelectedStation] = useState(null);
 
-  // useEffect(() => {
-  //   const trainRefs = ['Train1', 'Train2', 'Train3', 'Train4'];
-  //   const unsubscribes = trainRefs.map((trainRef) => {
-  //     const ref = firebase.database().ref(trainRef);
-  //     ref.on('value', (snapshot) => {
-  //       const data = snapshot.val();
-  //       if (data) {
-  //         setTrainData((prevTrainData) => {
-  //           const updatedTrainData = prevTrainData.filter((train) => train.id !== data.ID);
-  //           updatedTrainData.push(data);
-  //           return updatedTrainData;
-  //         });
-  //       }
-  //     });
-  //     return () => ref.off();
-  //   });
+  const Sensor1GetRequestFromTagIO = () => {
+    const url = 'https://api.tago.io/data?variable=location&variable=speed';
+    const deviceToken = '7531c772-6dbe-469f-91ef-910cfb1e1a5f'; // Replace with your actual device token
 
-  //   return () => {
-  //     unsubscribes.forEach((unsubscribe) => unsubscribe());
-  //   };
+    const headers = new Headers({
+      'Authorization': deviceToken
+    });
 
-  // }, []);
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+      // You can add more options here if needed
+    };
+
+    return fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(json => {
+        const locationData = json.result.find(item => item.variable === 'location');
+        if (locationData && locationData.value) {
+          const coordinates = locationData.value.split(',').map(coord => parseFloat(coord.trim()));
+          const [latitude, longitude] = coordinates;
+
+          const speedData = json.result.find(item => item.variable === 'speed');
+          const speed = speedData ? speedData.value : "Train 1 is currently not moving.";
+
+          console.log("Latitude of Node 1:", latitude);
+          console.log("Longitude of Node 1:", longitude);
+          console.log("Speed of Node 1:", speed);
+          return { latitude, longitude, speed };
+        }
+        return null;
+      })
+      .catch(error => {
+        console.error("Node 1 has a " + error);
+      });
+  };
+
+
+
+  const Sensor2GetRequestFromTagIO = () => {
+    const url = 'https://api.tago.io/data?variable=location&variable=speed';
+    const deviceToken = 'a7d29d89-6c1e-464e-b865-60f653b3bbee'; // Replace with your actual device token
+
+    const headers = new Headers({
+      'Authorization': deviceToken
+    });
+
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+      // You can add more options here if needed
+    };
+
+    return fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(json => {
+        const locationData = json.result.find(item => item.variable === 'location');
+        if (locationData && locationData.value) {
+          const coordinates = locationData.value.split(',').map(coord => parseFloat(coord.trim()));
+          const [latitude, longitude] = coordinates;
+
+          const speedData = json.result.find(item => item.variable === 'speed');
+          const speed = speedData ? speedData.value : "Train 2 is currently not moving.";
+
+          const rssiData = json.result.find(item => item.variable === 'rssi');
+          const rssi = rssiData ? rssiData.value : "RSSI data not available"; // Handle missing RSSI data
+
+          console.log("RSSI of Node 2: ", rssiData);
+          console.log("Latitude of Node 2:", latitude);
+          console.log("Longitude of Node 2:", longitude);
+          console.log("Speed of Node 2:", speed);
+          return { latitude, longitude, speed };
+        }
+        return null;
+      })
+      .catch(error => {
+        console.error("Node 2 has a " + error);
+      });
+  };
+
+  const Sensor3GetRequestFromTagIO = () => {
+    const url = 'https://api.tago.io/data?variable=location&variable=speed';
+    const deviceToken = '380e4ab4-dcf0-4acc-b818-f914a2656469';
+
+    const headers = new Headers({
+      'Authorization': deviceToken
+    });
+
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+
+    return fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(json => {
+        const locationData = json.result.find(item => item.variable === 'location');
+        if (locationData && locationData.value) {
+          const coordinates = locationData.value.split(',').map(coord => parseFloat(coord.trim()));
+          const [latitude, longitude] = coordinates;
+
+          const speedData = json.result.find(item => item.variable === 'speed');
+          const speed = speedData ? speedData.value : "0 Speed";
+
+          console.log("Latitude of Node 3:", latitude);
+          console.log("Longitude of Node 3:", longitude);
+          console.log("Speed of Node 3:", speed);
+          return { latitude, longitude, speed };
+        }
+        return null;
+      })
+      .catch(error => {
+        console.error("Node 3 has a " + error);
+      });
+  };
+
+  const Sensor4GetRequestFromTagIO = () => {
+    const url = 'https://api.tago.io/data?variable=location&variable=speed';
+    const deviceToken = '05facda3-2867-4b85-94e5-f6dcbb0a5dd0';
+
+    const headers = new Headers({
+      'Authorization': deviceToken
+    });
+
+    const requestOptions = {
+      method: 'GET',
+      headers: headers,
+    };
+
+    return fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(json => {
+        const locationData = json.result.find(item => item.variable === 'location');
+        if (locationData && locationData.value) {
+          const coordinates = locationData.value.split(',').map(coord => parseFloat(coord.trim()));
+          const [latitude, longitude] = coordinates;
+
+          const speedData = json.result.find(item => item.variable === 'speed');
+          const speed = speedData ? speedData.value : "Train 4 is currently not moving.";
+          console.log("Latitude of Node 4:", latitude);
+          console.log("Longitude of Node 4:", longitude);
+          console.log("Speed of Node 4:", speed);
+          return { latitude, longitude, speed }; ``
+        }
+        return null;
+      })
+      .catch(error => {
+        console.error("Node 4 has a " + error);
+      });
+  };
+
 
   const calculateRegion = () => {
     const minLat = Math.min(...stationCoordinates.map((coord) => coord.latitude));
@@ -98,16 +242,6 @@ const TrainPage = ({ navigation }) => {
   const initialRegion = calculateRegion();
 
   const handleDestination = (station) => {
-    if (doubleClickRef.current) {
-      // Double-click detected, zoom out to default view
-      mapRef.current.animateToRegion(initialRegion, 500); // Adjust the duration as needed
-      setSelectedStation(null); // Clear the selected station
-      doubleClickRef.current = false; // Reset double click flag
-      return;
-    }
-
-    doubleClickRef.current = true; // Set double click flag
-
     setSelectedStation(station);
 
     let region;
@@ -143,70 +277,172 @@ const TrainPage = ({ navigation }) => {
         longitudeDelta: 0.0001,
       };
     }
-
     mapRef.current.animateToRegion(region, 500); // Adjust the duration as needed
 
-    setTimeout(() => {
-      doubleClickRef.current = false; // Reset double click flag after 500ms
-    }, 500);
+
+
+    const etaText = getEtaTextForStation(selectedStation, stationCoordinates);
+    console.log("Updated ETA:", etaText); // Log the updated ETA text
+
+
+
+  };
+
+  const getEtaTextForStation = (station, stationCoordinates) => {
+    if (trainData.length > 0) {
+      const etaTexts = trainData.map((train) => {
+        const trainCoordinates = { lat: train.latitude, lng: train.longitude };
+        const stationObject = stationCoordinates.find((coord) => coord.name === station);
+
+        if (!stationObject) {
+          return `No station is currently being selected`;
+        }
+
+        const stationCoords = { lat: stationObject.latitude, lng: stationObject.longitude };
+
+        // const distance = geoDistance(trainCoordinates, stationCoords, 'K');
+        // 14.6122170
+        // const distance = haversineDistanceFormula(train.latitude, stationObject.latitude, train.longitude, stationObject.longitude);
+        const distance = haversineDistanceFormula(train.latitude, stationObject.latitude, train.longitude, stationObject.longitude);
+
+        console.log("The distance between Train Coordinates and Station: ", distance);
+        if (train.speed !== 0) {
+          const etaInMinutes = ((distance / ((train.speed * 3600) / (1000))) * 60).toFixed(2); // ETA = distance / ( (speed * 3600) / 1000 ) 
+          console.log("This is the ETA: ", etaInMinutes);
+          return `Train ${train.id} - ETA to ${station}: ${etaInMinutes} minutes`;
+        } else {
+          return `Train ${train.id} - ETA to ${station}: Train is not moving.`;
+        }
+      });
+      return etaTexts.join('\n');
+    } else {
+      return 'No train data available.';
+    }
+  };
+
+
+  const haversineDistanceFormula = (lat1, lat2, lon1, lon2) => {
+
+    // The math module contains a function
+    // named toRadians which converts from
+    // degrees to radians.
+    lon1 = lon1 * Math.PI / 180;
+    lon2 = lon2 * Math.PI / 180;
+    lat1 = lat1 * Math.PI / 180;
+    lat2 = lat2 * Math.PI / 180;
+
+    // Haversine formula
+    let dlon = lon2 - lon1;
+    let dlat = lat2 - lat1;
+    let a = Math.pow(Math.sin(dlat / 2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon / 2), 2);
+    let c = 2 * Math.asin(Math.sqrt(a));
+
+    // Radius of earth in kilometers. Use 3956
+    // for miles
+    let r = 6371;
+
+    // calculate the result
+    return (c * r);
+  }
+
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c; // Distance in kilometers
+    return distance;
   };
 
 
   const getEtaText = () => {
-    if (selectedStation) {
-      // Calculate ETA logic goes here
-      const eta = 5; // Replace with your actual ETA calculation
-      return `ETA to ${selectedStation} Station is ${eta} minutes`;
-    }
-    return '';
-  };
-  const navigateToSchedulesPage = () => {
+    if (trainData.length > 0) {
+      const etaTexts = trainData.map((train) => {
+        const closestStation = stationCoordinates.reduce((closest, station) => {
+          const point1 = { lat: train.latitude, lng: train.longitude };
+          const point2 = { lat: station.latitude, lng: station.longitude };
 
-    navigation.navigate('SchedulesPage', { station: selectedStation });
+          const distance = geoDistance(point1, point2, 'K');
+
+          if (distance < closest.distance) {
+            return { station, distance };
+          }
+
+          return closest;
+        }, { station: null, distance: Infinity });
+
+        if (train.speed !== 0) {
+          const etaInMinutes = closestStation.distance / train.speed; // ETA = distance / speed
+          return `Train ${train.id} - ETA to ${closestStation.station.name}: ${Math.round(etaInMinutes)} minutes`;
+        } else {
+          return `Train ${train.id} - ETA to ${closestStation.station.name}: Train is not moving.`;
+        }
+      });
+      return etaTexts.join('\n');
+    } else {
+      return 'No train data available.';
+    }
   };
+
+
+  const navigateToSchedulesPage = () => {
+    if (selectedStation) {
+      const etaText = getEtaTextForStation(selectedStation, stationCoordinates); // Calculate ETA text
+      navigation.navigate('SchedulesPage', { station: selectedStation, etaText }); // Pass etaText to SchedulesPage
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <MapView ref={mapRef}
-        style={{ flex: 1 }} region={initialRegion} zoomEnabled={false} scrollEnabled={false}>
-        <Polyline
-          coordinates={stationCoordinates}
-          strokeColor="#9370DB" // Line color
-          strokeWidth={5} // Line width
-        />
-
-        {trainData.map((train) => (
-          <Marker
-            key={train.id}
-            coordinate={{
-              latitude: train.latitude,
-              longitude: train.longitude,
-            }}
-            title={`Train ${train.id}`}
-            description={`Speed: ${train.speed} km/h`}
+      <TouchableWithoutFeedback onPress={handleDoubleTap}>
+        <MapView ref={mapRef}
+          style={{ flex: 1 }} region={initialRegion} zoomEnabled={true} scrollEnabled={false}>
+          <Polyline
+            coordinates={stationCoordinates}
+            strokeColor="#9370DB" // Line color
+            strokeWidth={5} // Line width
           />
-        ))}
 
-        <Marker coordinate={stationCoordinates[0]} title="Antipolo Station" style={{ width: 50, height: 50 }}>
-          <Image
-            source={require('../../../assets/train-station.png')}
-            style={{ width: 50, height: 50, resizeMode: 'contain' }}
-          />
-        </Marker>
+          {trainData.map((train) => (
+            <Marker
+              key={train.id}
+              coordinate={{
+                latitude: train.latitude,
+                longitude: train.longitude,
+              }}
+              title={`Train ${train.id} at ${train.longitude} ${train.latitude} `}
+              description={`Speed: ${train.speed} `}
+            />
+          ))}
 
-        <Marker coordinate={stationCoordinates[1]} title="Marikina-Pasig Station" style={{ width: 50, height: 50 }}>
-          <Image
-            source={require('../../../assets/train-station.png')}
-            style={{ width: 50, height: 50, resizeMode: 'contain' }}
-          />
-        </Marker>
+          <Marker coordinate={stationCoordinates[0]} title="Antipolo Station" style={{ width: 50, height: 50 }}>
+            <Image
+              source={require('../../../assets/train-station.png')}
+              style={{ width: 50, height: 50, resizeMode: 'contain' }}
+            />
+          </Marker>
 
-        <Marker coordinate={stationCoordinates[4]} title="Santolan Station" style={{ width: 50, height: 50 }}>
-          <Image
-            source={require('../../../assets/train-station.png')}
-            style={{ width: 50, height: 50, resizeMode: 'contain' }}
-          />
-        </Marker>
-      </MapView>
+          <Marker coordinate={stationCoordinates[1]} title="Marikina-Pasig Station" style={{ width: 50, height: 50 }}>
+            <Image
+              source={require('../../../assets/train-station.png')}
+              style={{ width: 50, height: 50, resizeMode: 'contain' }}
+            />
+          </Marker>
+
+          <Marker coordinate={stationCoordinates[4]} title="Santolan Station" style={{ width: 50, height: 50 }}>
+            <Image
+              source={require('../../../assets/train-station.png')}
+              style={{ width: 50, height: 50, resizeMode: 'contain' }}
+            />
+          </Marker>
+        </MapView>
+      </TouchableWithoutFeedback>
       <View
         style={{
           position: 'absolute',
@@ -222,16 +458,20 @@ const TrainPage = ({ navigation }) => {
           shadowOpacity: 0.3,
           shadowRadius: 2,
           elevation: 3,
+          alignItems: 'flex-end', // Align text to the right
         }}
       >
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}>{getEtaText()}</Text>
+        <Text style={{ color: '#fff', fontWeight: 'bold', textAlign: 'left' }}>
+          {getEtaTextForStation(selectedStation, stationCoordinates, trainData)}
+        </Text>
       </View>
+
 
       {selectedStation && (
         <View
           style={{
             position: 'absolute',
-            top: 55,
+            top: '13%',
             right: 10,
             padding: 10,
             backgroundColor: '#9370DB',
@@ -247,12 +487,10 @@ const TrainPage = ({ navigation }) => {
             alignItems: 'center',
           }}
         >
+
           <TouchableOpacity onPress={navigateToSchedulesPage}>
-
             <Text style={{ color: '#fff', fontWeight: 'bold' }}>View {selectedStation} Train Schedules </Text>
-
           </TouchableOpacity>
-
         </View>
       )}
 
