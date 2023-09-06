@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Button, Text, Image, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import SchedulesPage from '../SchedulesPage/SchedulesPage';
-import geoDistance from 'geo-distance-helper';
+// import geoDistance from 'geo-distance-helper';
 
 const stationCoordinates = [
   { name: 'Antipolo', latitude: 14.6248, longitude: 121.1213 }, // Antipolo Station
@@ -34,12 +34,7 @@ const TrainPage = ({ navigation }) => {
         });
 
         setTrainData(updatedTrainData);
-        console.log("this is updated train data");
-        console.log(updatedTrainData);
-
-        // // Calculate and update ETA text after updating train data
-        // const etaText = getEtaText(updatedTrainData); // Pass updated trainData as argument
-        // console.log("Updated ETA:", etaText);
+        console.log("Updated Train Data: ", updatedTrainData);
 
       })
       .catch((error) => {
@@ -128,10 +123,10 @@ const TrainPage = ({ navigation }) => {
           const speedData = json.result.find(item => item.variable === 'speed');
           const speed = speedData ? speedData.value : "Train 2 is currently not moving.";
 
-          const rssiData = json.result.find(item => item.variable === 'rssi');
-          const rssi = rssiData ? rssiData.value : "RSSI data not available"; // Handle missing RSSI data
+          // const rssiData = json.result.find(item => item.variable === 'rssi');
+          // const rssi = rssiData ? rssiData.value : "RSSI data not available"; // Handle missing RSSI data
 
-          console.log("RSSI of Node 2: ", rssiData);
+          // console.log("RSSI of Node 2: ", rssiData);
           console.log("Latitude of Node 2:", latitude);
           console.log("Longitude of Node 2:", longitude);
           console.log("Speed of Node 2:", speed);
@@ -280,8 +275,6 @@ const TrainPage = ({ navigation }) => {
     const etaText = getEtaTextForStation(selectedStation, stationCoordinates);
     console.log("Updated ETA:", etaText); // Log the updated ETA text
 
-
-
   };
 
   const getEtaTextForStation = (station, stationCoordinates) => {
@@ -296,21 +289,17 @@ const TrainPage = ({ navigation }) => {
 
         // const stationCoords = { lat: stationObject.latitude, lng: stationObject.longitude };
 
-        // const distance = geoDistance(trainCoordinates, stationCoords, 'K');
-        // 14.6122170
-        // const distance = haversineDistanceFormula(train.latitude, stationObject.latitude, train.longitude, stationObject.longitude);
         const distance = haversineDistanceFormula(train.latitude, stationObject.latitude, train.longitude, stationObject.longitude);
-
-        console.log("The distance between Train Coordinates and Station: ", distance);
         if (train.speed !== 0) {
           const etaInMinutes = ((distance / ((train.speed * 3600) / 1000)) * 60).toFixed(2); // ETA in minutes
           let etaText;
-          if (etaInMinutes < 1) {
+          if (etaInMinutes < 1) { //Less than 1 minute (Seconds)
             const etaInSeconds = (etaInMinutes * 60).toFixed(0); // ETA in seconds
             etaText = `Train ${train.id} - ETA to ${station}: ${etaInSeconds} seconds`;
-          } else if (etaInMinutes >= 60) {
-            const etaInHours = (etaInMinutes / 60).toFixed(2); // ETA in hours
-            etaText = `Train ${train.id} - ETA to ${station}: ${etaInHours} hours`;
+          } else if (etaInMinutes >= 60) { //Greater than 60 minutes (Hours)
+            const etaInHours = Math.floor(etaInMinutes / 60); // ETA in hours
+            const remainingMinutes = (etaInMinutes % 60).toFixed(0); // Remaining minutes
+            etaText = `Train ${train.id} - ETA to ${station}: ${etaInHours} hour and ${remainingMinutes} minutes`;
           } else {
             etaText = `Train ${train.id} - ETA to ${station}: ${etaInMinutes} minutes`;
           }
@@ -364,37 +353,6 @@ const TrainPage = ({ navigation }) => {
     const distance = R * c; // Distance in kilometers
     return distance;
   };
-
-
-  const getEtaText = () => {
-    if (trainData.length > 0) {
-      const etaTexts = trainData.map((train) => {
-        const closestStation = stationCoordinates.reduce((closest, station) => {
-          const point1 = { lat: train.latitude, lng: train.longitude };
-          const point2 = { lat: station.latitude, lng: station.longitude };
-
-          const distance = geoDistance(point1, point2, 'K');
-
-          if (distance < closest.distance) {
-            return { station, distance };
-          }
-
-          return closest;
-        }, { station: null, distance: Infinity });
-
-        if (train.speed !== 0) {
-          const etaInMinutes = closestStation.distance / train.speed; // ETA = distance / speed
-          return `Train ${train.id} - ETA to ${closestStation.station.name}: ${Math.round(etaInMinutes)} minutes`;
-        } else {
-          return `Train ${train.id} - ETA to ${closestStation.station.name}: Train Stopped.`;
-        }
-      });
-      return etaTexts.join('\n');
-    } else {
-      return 'No train data available.';
-    }
-  };
-
 
   const navigateToSchedulesPage = () => {
     if (selectedStation) {
@@ -551,14 +509,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 10, // Add marginBottom to create space below the buttons
+    marginBottom: 10,
   },
   button: {
     backgroundColor: '#9370DB',
     width: 200,
     height: 40,
     borderRadius: 20,
-    marginBottom: 10, // Add marginBottom to create space below each button
+    marginBottom: 10,
   },
 });
 export default TrainPage;

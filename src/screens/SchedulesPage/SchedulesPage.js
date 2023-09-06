@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
-// const clockIcon = require('../../../assets/clock-icon.png'); // Replace with the actual path to your clock icon image
 
 const SchedulesPage = ({ route }) => {
   const { station, etaText } = route.params;
@@ -20,12 +19,7 @@ const SchedulesPage = ({ route }) => {
         {etaTexts.map((schedule, index) => (
           <View key={index} style={styles.card}>
             <View style={styles.scheduleItem}>
-              {/* <Image source={clockIcon} style={styles.clockIcon} /> */}
-              <Image
-                source={require('../../../assets/train-station.png')}
-                style={styles.clockIcon}
-              />
-
+              <Image source={require('../../../assets/clock.png')} style={styles.clockIcon} />
               <Text style={styles.scheduleText}>{schedule}</Text>
             </View>
           </View>
@@ -40,7 +34,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start', // Align container to the top
     backgroundColor: '#F4F4F4',
-    padding: 20,
+    padding: 15,
   },
   headerContainer: {
     flexDirection: 'row',
