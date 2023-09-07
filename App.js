@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CarouselPage from './src/screens/CarouselPage/CarouselPage';
 import MenuPage from './src/screens/MenuPage/MenuPage';
 import TrainPage from './src/screens/TrainPage/TrainPage';
-import TwitterPage from './src/screens/TwitterPage/TwitterPage';
+import SchedulesListPage from './src/screens/SchedulesListPage/SchedulesListPage';
 import SchedulesPage from './src/screens/SchedulesPage/SchedulesPage';
 
 import { Text, View, StyleSheet, Image } from 'react-native';
@@ -55,7 +55,7 @@ function App() {
           source={require('./assets/lrt-icon.png')}
           style={styles.headerImage}
         />
-        <Text style={styles.headerTitleText}>LRT-2 Announcements</Text>
+        <Text style={styles.headerTitleText}>Train Information and Schedules</Text>
       </View>
     );
   };
@@ -96,7 +96,7 @@ function App() {
             headerStyle: {
               backgroundColor: '#9370DB',
             },
-          }}        />
+          }} />
         <Stack.Screen
           name="TrainPage"
           component={TrainPage}
@@ -109,8 +109,8 @@ function App() {
           }}
         />
         <Stack.Screen
-          name="TwitterPage"
-          component={TwitterPage}
+          name="SchedulesListPage"
+          component={SchedulesListPage}
           options={{
             headerTitle: twitterPageHeaderTitle,
             headerTintColor: '#FFFFFF',

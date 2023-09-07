@@ -434,7 +434,7 @@ const TrainPage = ({ navigation }) => {
         <View
           style={{
             position: 'absolute',
-            top: '13%',
+            top: '15%',
             right: 10,
             padding: 10,
             backgroundColor: '#9370DB',

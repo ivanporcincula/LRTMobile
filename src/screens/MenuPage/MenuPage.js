@@ -7,7 +7,7 @@ const MenuPage = ({ navigation }) => {
   };
 
   const navigateToTwitterPage = () => {
-    navigation.navigate('TwitterPage');
+    navigation.navigate('SchedulesListPage');
   };
 
   return (
