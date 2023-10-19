@@ -6,7 +6,7 @@ import SchedulesPage from '../SchedulesPage/SchedulesPage';
 
 const stationCoordinates = [
   { name: 'Antipolo', latitude: 14.6248, longitude: 121.1213 }, // Antipolo Station
-  { name: 'Marikina-Pasig', latitude: 14.62039, longitude: 121.10014 }, // Marikina-Pasig Station
+  { name: 'Marikina', latitude: 14.62039, longitude: 121.10014 }, // Marikina-Pasig Station
   { name: 'Pajaron', latitude: 14.6184, longitude: 121.09111 }, // LANDMARK CLOSE TO SANTOLAN STATION (PAJARON)
   { name: 'BCEO', latitude: 14.61988, longitude: 121.08848 }, // LANDMARK CLOSE TO SANTOLAN STATION (BCEO)
   { name: 'Santolan', latitude: 14.62211, longitude: 121.08596 }, // Santolan Station
@@ -15,16 +15,29 @@ const stationCoordinates = [
 const TrainPage = ({ navigation }) => {
   const mapRef = useRef(null); // Create a ref for the MapView
   const [showSchedules, setShowSchedules] = useState(false);
+  const [trainDirection, setTrainDirection] = useState({});
 
   const updateTrainData = () => {
     Promise.all([
-      Sensor1GetRequestFromTagIO(),
+      // Sensor1GetRequestFromTagIO(),
       Sensor2GetRequestFromTagIO(),
-      Sensor3GetRequestFromTagIO(),
-      Sensor4GetRequestFromTagIO(),
+      // Sensor3GetRequestFromTagIO(),
+      // Sensor4GetRequestFromTagIO(),
     ])
       .then((responses) => {
         const updatedTrainData = responses.map((response, index) => {
+
+          const prevTrainData = trainData[index] || {}; // Get previous train data
+          const { latitude, longitude } = response;
+          const speed = response.speed;
+
+          // Determine the train direction
+          const direction = getTrainDirection(prevTrainData.longitude, longitude);
+          console.log("Direction of Train: ", direction);
+
+          // Update train direction
+          setTrainDirection((prevDirection) => ({ ...prevDirection, [index]: direction }));
+
           return {
             id: index + 1, // Assign a unique id based on the index
             latitude: response.latitude,
@@ -48,6 +61,21 @@ const TrainPage = ({ navigation }) => {
 
     return () => clearInterval(interval);
   }, []);
+
+
+  const getTrainDirection = (prevLng, currentLng) => {
+    if (prevLng === undefined) {
+      return "unknown";
+    }
+
+    if (currentLng > prevLng) {
+      return "Eastbound"; // Train is moving east
+    } else if (currentLng < prevLng) {
+      return "Westbound"; // Train is moving west
+    }
+
+    return "unknown"; // No significant movement
+  };
 
   const handleDoubleTap = () => {
     mapRef.current.animateToRegion(initialRegion, 500); // Adjust the duration as needed
@@ -251,13 +279,13 @@ const TrainPage = ({ navigation }) => {
         latitudeDelta: latDelta,
         longitudeDelta: lngDelta,
       };
-    } else if (station === 'Marikina-Pasig') {
+    } else if (station === 'Marikina') {
       const marikinaPasigCoord = stationCoordinates[1];
       region = {
         latitude: marikinaPasigCoord.latitude,
         longitude: marikinaPasigCoord.longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.015,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.01,
       };
     } else if (station === 'Santolan') {
       const santolanCoord = stationCoordinates[4];
@@ -295,13 +323,18 @@ const TrainPage = ({ navigation }) => {
           let etaText;
           if (etaInMinutes < 1) { //Less than 1 minute (Seconds)
             const etaInSeconds = (etaInMinutes * 60).toFixed(0); // ETA in seconds
-            etaText = `Train ${train.id} - ETA to ${station}: ${etaInSeconds} seconds`;
-          } else if (etaInMinutes >= 60) { //Greater than 60 minutes (Hours)
+            const remainingSeconds = etaInSeconds % 60; // Remaining seconds
+            etaText = `Train ${train.id} - ETA to ${station}:   ${remainingSeconds} seconds`;
+
+          } else if (etaInMinutes >= 60) {
             const etaInHours = Math.floor(etaInMinutes / 60); // ETA in hours
             const remainingMinutes = (etaInMinutes % 60).toFixed(0); // Remaining minutes
             etaText = `Train ${train.id} - ETA to ${station}: ${etaInHours} hour and ${remainingMinutes} minutes`;
           } else {
-            etaText = `Train ${train.id} - ETA to ${station}: ${etaInMinutes} minutes`;
+            const etaMinutes = Math.floor(etaInMinutes);
+            const etaInSeconds = (etaInMinutes * 60).toFixed(0); // ETA in seconds
+            const remainingSeconds = etaInSeconds % 60; // Remaining seconds
+            etaText = `Train ${train.id} - ETA to ${station}: ${etaMinutes} minutes and ${remainingSeconds} seconds`;
           }
           return etaText;
         } else {
@@ -365,25 +398,31 @@ const TrainPage = ({ navigation }) => {
     <View style={{ flex: 1 }}>
       <TouchableWithoutFeedback onPress={handleDoubleTap}>
         <MapView ref={mapRef}
-          style={{ flex: 1 }} region={initialRegion} zoomEnabled={true} scrollEnabled={false}>
+          style={{ flex: 1 }} region={initialRegion} zoomEnabled={true} scrollEnabled={true} >
           <Polyline
             coordinates={stationCoordinates}
             strokeColor="#9370DB" // Line color
             strokeWidth={5} // Line width
           />
 
-          {trainData.map((train) => (
+          {trainData.map((train, index) => (
             <Marker
               key={train.id}
               coordinate={{
                 latitude: train.latitude,
                 longitude: train.longitude,
               }}
-              title={`Train ${train.id} at ${train.longitude} ${train.latitude} `}
-              description={`Speed: ${train.speed} `}
+              title={`Train ${train.id} at ${train.longitude} ${train.latitude}`}
+              description={`Speed: ${(train.speed * 3.6).toFixed(2)} km/h`}
+              pinColor={
+                trainDirection[index] === "Eastbound"
+                  ? "blue"
+                  : trainDirection[index] === "Westbound"
+                    ? "red"
+                    : "gray"
+              }
             />
           ))}
-
           <Marker coordinate={stationCoordinates[0]} title="Antipolo Station" style={{ width: 50, height: 50 }}>
             <Image
               source={require('../../../assets/train-station.png')}
@@ -434,7 +473,7 @@ const TrainPage = ({ navigation }) => {
         <View
           style={{
             position: 'absolute',
-            top: '15%',
+            top: '8%',
             right: 10,
             padding: 10,
             backgroundColor: '#9370DB',
@@ -485,7 +524,7 @@ const TrainPage = ({ navigation }) => {
       >
         <Text style={styles.stationText}>Select your Station:</Text>
         <Button title="Santolan Station" onPress={() => handleDestination('Santolan')} color="#9370DB" style={styles.button} />
-        <Button title="Marikina-Pasig Station" onPress={() => handleDestination('Marikina-Pasig')} color="#9370DB" style={styles.button} />
+        <Button title="Marikina-Pasig Station" onPress={() => handleDestination('Marikina')} color="#9370DB" style={styles.button} />
         <Button title="Antipolo Station" onPress={() => handleDestination('Antipolo')} color="#9370DB" style={styles.button} />
       </View>
     </View>
