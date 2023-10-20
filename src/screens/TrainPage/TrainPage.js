@@ -65,7 +65,7 @@ const TrainPage = ({ navigation }) => {
 
   const getTrainDirection = (prevLng, currentLng) => {
     if (prevLng === undefined) {
-      return "unknown";
+      return "No significant movement";
     }
 
     if (currentLng > prevLng) {
@@ -74,7 +74,7 @@ const TrainPage = ({ navigation }) => {
       return "Westbound"; // Train is moving west
     }
 
-    return "unknown"; // No significant movement
+    return "No significant movement" // No significant movement
   };
 
   const handleDoubleTap = () => {
@@ -412,7 +412,7 @@ const TrainPage = ({ navigation }) => {
                 latitude: train.latitude,
                 longitude: train.longitude,
               }}
-              title={`Train ${train.id} at ${train.longitude} ${train.latitude}`}
+              title={`Train ${train.id} at ${train.latitude} ${train.longitude}`}
               description={`Speed: ${(train.speed * 3.6).toFixed(2)} km/h`}
               pinColor={
                 trainDirection[index] === "Eastbound"
@@ -499,6 +499,35 @@ const TrainPage = ({ navigation }) => {
       {showSchedules && (
         <SchedulesPage selectedStation={selectedStation} />
       )}
+
+      <View
+        style={{
+          position: 'absolute',
+          top: '15%',
+          right: 10,
+          padding: 10,
+          backgroundColor: '#9370DB',
+          borderRadius: 10,
+          borderWidth: 2,
+          borderColor: '#fff',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.3,
+          shadowRadius: 2,
+          elevation: 3,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+          Train 1 (For Testing Purposes){'\n'}
+          Latitude: {trainData[0].latitude},  {'\n'}
+          Longitude: {trainData[0].longitude} ,{'\n'}
+          Speed: {trainData[0].speed}
+
+        </Text>
+      </View>
+
 
       <View
         style={{
