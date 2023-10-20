@@ -500,33 +500,35 @@ const TrainPage = ({ navigation }) => {
         <SchedulesPage selectedStation={selectedStation} />
       )}
 
-      <View
-        style={{
-          position: 'absolute',
-          top: '15%',
-          right: 10,
-          padding: 10,
-          backgroundColor: '#9370DB',
-          borderRadius: 10,
-          borderWidth: 2,
-          borderColor: '#fff',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.3,
-          shadowRadius: 2,
-          elevation: 3,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-          Train 1 (For Testing Purposes){'\n'}
-          Latitude: {trainData[0].latitude},  {'\n'}
-          Longitude: {trainData[0].longitude} ,{'\n'}
-          Speed: {trainData[0].speed}
+      {trainData.length > 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            top: '15%',
+            right: 10,
+            padding: 10,
+            backgroundColor: '#9370DB',
+            borderRadius: 10,
+            borderWidth: 2,
+            borderColor: '#fff',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
+            elevation: 3,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+            Train 1 (For Testing Purposes){'\n'}
+            Latitude: {trainData[0].latitude},  {'\n'}
+            Longitude: {trainData[0].longitude} ,{'\n'}
+            Speed: {trainData[0].speed}
+          </Text>
+        </View>
+      )}
 
-        </Text>
-      </View>
 
 
       <View
