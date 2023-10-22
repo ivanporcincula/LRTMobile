@@ -7,6 +7,8 @@ import SchedulesPage from '../SchedulesPage/SchedulesPage';
 const stationCoordinates = [
   { name: 'Antipolo', latitude: 14.6248, longitude: 121.1213 }, // Antipolo Station
   { name: 'Marikina', latitude: 14.62039, longitude: 121.10014 }, // Marikina-Pasig Station
+  // { name: 'Antipolo', latitude: 14.6327452, longitude: 121.1050941 }, //CAR TEST
+  // { name: 'Marikina', latitude: 14.6330449, longitude: 121.1021380 }, //CAR TEST
   { name: 'Pajaron', latitude: 14.6184, longitude: 121.09111 }, // LANDMARK CLOSE TO SANTOLAN STATION (PAJARON)
   { name: 'BCEO', latitude: 14.61988, longitude: 121.08848 }, // LANDMARK CLOSE TO SANTOLAN STATION (BCEO)
   { name: 'Santolan', latitude: 14.62211, longitude: 121.08596 }, // Santolan Station
@@ -412,8 +414,8 @@ const TrainPage = ({ navigation }) => {
                 latitude: train.latitude,
                 longitude: train.longitude,
               }}
-              title={`Train ${train.id} at ${train.latitude} ${train.longitude}`}
-              description={`Speed: ${(train.speed * 3.6).toFixed(2)} km/h`}
+              //title={`Train ${train.id} at ${train.latitude} ${train.longitude}`}
+              //description={`Speed: ${(train.speed * 3.6).toFixed(2)} km/h`}
               pinColor={
                 trainDirection[index] === "Eastbound"
                   ? "blue"
@@ -500,33 +502,35 @@ const TrainPage = ({ navigation }) => {
         <SchedulesPage selectedStation={selectedStation} />
       )}
 
-      <View
-        style={{
-          position: 'absolute',
-          top: '15%',
-          right: 10,
-          padding: 10,
-          backgroundColor: '#9370DB',
-          borderRadius: 10,
-          borderWidth: 2,
-          borderColor: '#fff',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.3,
-          shadowRadius: 2,
-          elevation: 3,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-          Train 1 (For Testing Purposes){'\n'}
-          Latitude: {trainData[0].latitude},  {'\n'}
-          Longitude: {trainData[0].longitude} ,{'\n'}
-          Speed: {trainData[0].speed}
+      {trainData.length > 0 && (
+        <View
+          style={{
+            position: 'absolute',
+            top: '15%',
+            right: 10,
+            padding: 10,
+            backgroundColor: '#9370DB',
+            borderRadius: 10,
+            borderWidth: 2,
+            borderColor: '#fff',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.3,
+            shadowRadius: 2,
+            elevation: 3,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+            Train 1 (For Testing Purposes){'\n'}
+            Latitude: {trainData[0].latitude}{'\n'}
+            Longitude: {trainData[0].longitude}{'\n'}
+            Speed: {(trainData[0].speed * 3.6).toFixed(2)} {'km/h or'} {trainData[0].speed.toFixed(2)} {'m/s'}
+          </Text>
+        </View>
+      )}
 
-        </Text>
-      </View>
 
 
       <View
